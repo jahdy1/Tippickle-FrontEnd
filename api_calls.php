@@ -6,9 +6,14 @@
  
 /*
 
-GET		/api/tip/ : Get all tips
-POST 	/api/tip/ : Add a tip
-PUT 	/api/tip/{resource_id}/ : Update an existing tip
+GET			/api/tip/ : Get all tips
+GET			/api/tip/?pg=2&rp=20 : Get tips on page 2 where results are 20 per page
+GET			/api/tip/{resource_id} : Get specified tip
+GET			/api/tip/search/?tip_ids=2,3,10,11&pg=1 : Get array of results were tip id equals either 2, 3, 10, or ll. Return only page 1
+GET			/api/tip/search/?tag=NYC&pg=1 : Get array of tips that share the tag 'NYC'. Return only page 1
+POST 		/api/tip/ : Add a tip
+PUT 		/api/tip/{resource_id}/ : Update an existing tip
+DELETE 	/api/tip/{resource_id}/ : Delete an existing tip
 
 
 */

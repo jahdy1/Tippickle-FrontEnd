@@ -24,7 +24,7 @@
 				switch($action){
 					case 'search':
 						if(isset($_GET['tag'])){
-							$results = Tag::getSimilarTips($_GET['tag']);
+							$results = Tag::getSimilarTips($_GET['tag'], $pg, $rp);
 							echo RestUtils::sendResponse(200, json_encode($results));
 						} else if(isset($_GET['tip_ids'])){
 							$tips = explode(',',$_GET['tip_ids']);
