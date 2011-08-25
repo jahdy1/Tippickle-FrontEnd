@@ -11,14 +11,29 @@
 	if($target_type == 'tip'){
 		if($args && isset($args['id'])){
 			$tip = new Tip($args['id']);
-			if(isset($tip->uid)){
+			if($tip->uid != 0){
 				echo RestUtils::sendResponse(200, json_encode($tip));
 			} else {
 				echo RestUtils::sendResponse(400, '');
 			}
 		} else {
-			if($results = Tip::getAll(true, false, false)){
-				echo RestUtils::sendResponse(200, json_encode($results));
+			if(isset($action)){
+				switch($action){
+					case 'search':
+						if(isset($_GET['tag'])){
+							$results = Tag::getSimilarTips($_GET['tag']);
+							echo RestUtils::sendResponse(200, json_encode($results));
+						} else if(isset($_GET['tip_ids'])){
+							$tips = explode(',',$_GET['tip_ids']);
+							$results = Tip::getTips($tips, true, false, false);
+							echo RestUtils::sendResponse(200, json_encode($results));
+						}
+					break;
+				}
+			} else {
+				if($results = Tip::getAll(true, false, false)){
+					echo RestUtils::sendResponse(200, json_encode($results));
+				}
 			}
 		}
 	}
