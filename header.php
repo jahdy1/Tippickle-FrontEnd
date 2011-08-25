@@ -37,7 +37,20 @@
   <?php 
 	global $db_tables;
 	if(isset($_GET['clear'])) { if(isset($memcache)) $memcache->flush(); IO::clearTables($db_tables); }
+	if(isset($_GET['drop'])) IO::dropTables($db_tables);
+	if(isset($_GET['info'])) phpinfo();
+	if(isset($_GET['backup'])) {
+		IO::backupUsers();
+		IO::backupTips();
+	}
+	if(isset($_GET['setup'])){
+		IO::importSampleXMLFile('setup-data'.DS.'sample-member.xml','member');
+		IO::importSampleXMLFile('setup-data'.DS.'sample-tip.xml','tip');
+	}
 
-	include 'includes/login.php';?>
+	include 'includes/login.php';
+	include 'nav.php';
+	
+	?>
   
 	

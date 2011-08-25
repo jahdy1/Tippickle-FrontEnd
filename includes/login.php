@@ -20,7 +20,7 @@ if(isset($_GET['signout'])) Session::logout();
 <input type="submit" value="login"/>
 </form>
 <?php else:?>
-Welcome <a href="<?php echo profile_link()?>"><?php echo displayName();?></a>, Not you? <a href="?signout">Signout</a>
+Welcome <?php echo displayName();?>, Not you? <a href="?signout">Signout</a>
 <?php endif;?>
 </div><!--/login-form-->
 

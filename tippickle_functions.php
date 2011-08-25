@@ -1,5 +1,34 @@
 <?php
 
+if(class_exists('Init')){
+
+	add_action('init', 'bjl_tippickle_flush_rules');
+	
+	function bjl_tippickle_flush_rules(){
+			add_rewrite_rule('api/([^/]*)/([^/]*)/?','index.php?pagename=api&entity=$matches[1]&mixed=$matches[2]','top');
+			add_rewrite_rule('api/([^/]*)/?','index.php?pagename=api&entity=$matches[1]','top');
+			foreach(Init::$pages as $page){
+				$url = '';
+				if(isset($page['parent'])) $url .= Util::sanitize_title($page['parent']) . '/';
+				$url .= Util::sanitize_title($page['title']);
+				if(isset($page['$_get_var'])) add_rewrite_rule('/([^/]+)'.$url.'/([^/]+)', 'index.php?pagename='.Util::sanitize_title($page['title']).'&'.$page['$_get_var'].'=$matches[1]', 'top');
+			}
+			flush_rewrite_rules(false);
+	}
+	
+	add_filter('query_vars', 'bjl_tippickle_query_vars');
+	
+	function bjl_tippickle_query_vars($query_vars){
+		foreach(Init::$pages as $page){
+			if(!in_array($page['$_get_var'], $query_vars)) $query_vars[] = $page['$_get_var'];
+		}
+		$query_vars[] = 'entity';
+		$query_vars[] = 'mixed';
+		return $query_vars;
+	}
+
+}
+
 if ( !session_id() )
 add_action( 'init', 'session_start' );
 
@@ -29,22 +58,6 @@ function logged_in(){
 	return Session::logged_in();
 }
 
-function isBusiness(){
-	return Session::isBusiness();
-}
-
-function businessID(){
-	return $_SESSION[Session::session_var_name()]['business'][0]['id'];
-}
-
-function businessUID(){
-	return $_SESSION[Session::session_var_name()]['business'][0]['uid'];
-}
-
-function isProfessional(){
-	return Session::isProfessional();
-}
-
 function isMember(){
 	return Session::isMember();
 }
@@ -55,10 +68,6 @@ function memberID(){
 
 function memberUID(){
 	return $_SESSION[Session::session_var_name()]['member']['uid'];
-}
-
-function businessName(){
-	return Session::businessName();
 }
 
 function memberName(){
@@ -77,31 +86,9 @@ function phone($phone_number){
 	return Util::phone($phone_number);
 }
 
-function event_times($el, $return = 'output', $theme = 'list'){
-	$details = Event::getDates($el['start_datetime'],$el['end_datetime']);
-	return $details[$return];
-}
-
-function reviews_html(Entity $entity){
-	include dirname(__FILE__) . DS . 'includes' . DS . 'reviews-widget.php';
-}
-
-function actions_html(Entity $entity){
-	include dirname(__FILE__) . DS . 'includes' . DS . 'actions-widget.php';
-}
-
 function uid(){
-	if(isBusiness()) return businessUID(); else if(isMember()) return memberUID();
+	if(isMember()) return memberUID();
 }
-
-function profile_link(){
-	if(isBusiness()){
-		return $_SESSION[Session::session_var_name()]['business'][0]['permalink'];
-	} else if(isMember()){
-		return $_SESSION[Session::session_var_name()]['member']['permalink'];
-	}
-}
-
 
 //Function to create a string of elapsed time differences
 //
@@ -182,64 +169,6 @@ function isAdmin($num = 8){
 	return Session::isAdmin($num);
 }
 
-function options($option = NULL){
-	return Session::options($option);
-}
-
 function last_day_of_the_month(){
 	return date('F j, Y', strtotime('next month')-60*60*24);
-}
-
-function get_weather_condition_image($condition,$image = NULL){
-	$image = array(1=>'Clouds.png',
-								 2=>'Clouds_Moon.png',
-								 3=>'Clouds_Sunny.png',
-								 4=>'Clouds_Windy.png',
-								 5=>'Moon.png',
-								 6=>'Moon_Fog.png',
-								 7=>'Stormy_Lightning.png',
-								 8=>'Stormy_Rain.png',
-								 9=>'Stormy_Rain_Hail.png',
-								 10=>'Stormy_Rain_Lightning.png',
-								 11=>'Sunny.png',
-								 12=>'Windy.png',
-								 13=>'DayMostlyCloudy.png',
-								 14=>'NightMostlyCloudy.png',
-								 );
-	$time_when_dark = '7pm';
-	$tod = date('ga') >= $time_when_dark ? 'night':'day';
-	switch(strtolower($condition)){
-		case 'thunderstorm': 
-			return $image[10];
-		break;
-		case 'heavyrain': 
-			return $image[8];
-		break;
-		case 'overcast': 
-			return $image[1];
-		break;
-		case 'partlycloudy': 
-			if($tod == 'day') return $image[3]; else return $image[2];
-		break;
-		case 'mostlycloudy':
-			if($tod == 'day') return $image[13]; else return $image[14];
-		break;
-		case 'cloudy': 
-			return $image[1];
-		break;
-		default: 
-			if($tod == 'day') return $image[11]; else return $image[5];
-		break;
-	}
-}
-
-function get_signup_link(){
-}
-
-function admin_only(){
-	$output = '';
-	$output .= '<span class="admin-only">';
-	$output .= 'Admin Only';
-	$output .= '</span>';
-	echo $output;
 }
