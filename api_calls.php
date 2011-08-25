@@ -4,6 +4,15 @@
  *
  */
  
+/*
+
+GET		/api/tip/ : Get all tips
+POST 	/api/tip/ : Add a tip
+PUT 	/api/tip/{resource_id}/ : Update an existing tip
+
+
+*/
+ 
 $entity = get_query_var('entity') != '' ?get_query_var('entity'):false;
 $id = false;
 $query = false;
