@@ -24,17 +24,30 @@
 				switch($action){
 					case 'search':
 						if(isset($_GET['tag'])){
-							$results = Tag::getSimilarTips($_GET['tag'], $pg, $rp);
+							if(isset($_GET['count'])){
+								$results = Tag::getSimilarTipsCount(urldecode($_GET['tag']));
+							} else {
+								$results = Tag::getSimilarTips(urldecode($_GET['tag']), $pg, $rp);
+							}
 							echo RestUtils::sendResponse(200, json_encode($results));
 						} else if(isset($_GET['tip_ids'])){
 							$tips = explode(',',$_GET['tip_ids']);
-							$results = Tip::getTips($tips, true, false, $pg, $rp);
+							if(isset($_GET['count'])){
+								$results = Tip::getTipsCount($tips, false);
+							} else {
+								$results = Tip::getTips($tips, true, false, $pg, $rp);
+							}
 							echo RestUtils::sendResponse(200, json_encode($results));
 						}
 					break;
 				}
 			} else {
-				if($results = Tip::getAll(true, false, $pg, $rp)){
+				if(isset($_GET['count'])){
+					$results = Tip::getAllCount(false);
+				} else {
+					$results = Tip::getAll(true, false, $pg, $rp);
+				}
+				if($results){
 					echo RestUtils::sendResponse(200, json_encode($results));
 				}
 			}

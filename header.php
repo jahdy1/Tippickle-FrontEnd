@@ -42,10 +42,14 @@
 	if(isset($_GET['backup'])) {
 		IO::backupUsers();
 		IO::backupTips();
+		IO::backupTags();
+		IO::backupTagOptions();
 	}
 	if(isset($_GET['setup'])){
 		IO::importSampleXMLFile('setup-data'.DS.'sample-member.xml','member');
 		IO::importSampleXMLFile('setup-data'.DS.'sample-tip.xml','tip');
+		IO::importSampleXMLFile('setup-data'.DS.'sample-tag.xml','tag','insert');
+		IO::importSampleXMLFile('setup-data'.DS.'sample-tag_options.xml','tag','insertOptions');
 	}
 
 	include 'includes/login.php';
