@@ -13,6 +13,8 @@ GET			/api/tip/search/?tip_ids=2,3,10,11&pg=1 : Get array of results were tip id
 GET			/api/tip/search/?tag=NYC&pg=1 : Get array of tips that share the tag 'NYC'. Return only page 1
 GET			/api/tip/search/?tag=NYC&count : Get count of this query
 POST 		/api/tip/ : Add a tip
+POST 		/api/rating/ : Add a rating
+POST 		/api/comment/ : Add a comment
 PUT 		/api/tip/{resource_id}/ : Update an existing tip
 DELETE 	/api/tip/{resource_id}/ : Delete an existing tip
 

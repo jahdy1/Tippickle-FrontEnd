@@ -1,7 +1,9 @@
 <?php
 
 // add Tip to db
-if($target_type == 'tip'){
+
+switch($target_type){
+	case 'tip':
 	if($values = $data->getRequestVars()){
 		if(isset($values['tip']) && isset($values['title']) && !empty($values['tip']) && !empty($values['title'])) {
 			$values['tags'] = (array)json_decode(stripslashes($values['tags']));
@@ -12,4 +14,36 @@ if($target_type == 'tip'){
 			}
 		}
 	}
+	break;
+	case 'rating':
+	if($values = $data->getRequestVars()){
+		if(isset($values['actor_uid']) && isset($values['target_uid'])) {
+			if(Rating::add($values['actor_uid'], $values['target_uid'], $values['rating'])){
+				echo RestUtils::sendResponse(201, json_encode(array('status'=>'ok')), 'application/json', Tip::permalink($id));
+			} else {
+				echo RestUtils::sendResponse(400, '', 'application/json');
+			}
+		}
+	}	
+	break;
+	case 'comment':
+	if($values = $data->getRequestVars()){
+		if(isset($values['comment']) && isset($values['ancestor_uid'])) {
+			if($id = Comment::add($values)){
+				echo RestUtils::sendResponse(201, json_encode(array('status'=>'ok', 'comment_id'=>$id)), 'application/json', Comment::permalink($id));
+			} else {
+				echo RestUtils::sendResponse(400, '', 'application/json');
+			}
+		}
+	}	
+	break;
+	case 'member':
+	if($values = $data->getRequestVars()){
+		if($id = Member::add($values)){
+			echo RestUtils::sendResponse(201, json_encode(array('status'=>'ok', 'comment_id'=>$id)), 'application/json', Comment::permalink($id));
+		} else {
+			echo RestUtils::sendResponse(400, '', 'application/json');
+		}
+	}	
+	break;
 }

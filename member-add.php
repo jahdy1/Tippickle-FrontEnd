@@ -9,6 +9,9 @@
 $stype = 'member';
 ?>
 <?php 
+
+$action = isset($_GET['edit'])?'edit':'add';
+
 $form = new Form($stype,NULL,1);
 //echo $form->build();
 if($results = $form->process()){
@@ -25,12 +28,10 @@ if($results = $form->process()){
 }
 ?>
 
-<?php get_header(); ?>
-
 <div class="main-content clearfix" id="member-content">
 
 
-<form action="" method="post">
+<form action="<?php if(isset($_GET['form_action'])) echo urldecode($_GET['form_action']);?>" method="post" <?php if(isset($_GET['form_id'])) echo 'id="'.urldecode($_GET['form_id']).'"';?>>
 <div id="setup-member" class="setup-page">
   <?php if(isset($errors)){?>
   <div class="alerts-box">
@@ -93,8 +94,7 @@ if($results = $form->process()){
   </table>
   </div><!--/section-->
 </div><!--/setup-page-->
+	<input type="hidden" name="<?php if($action == 'add') echo 'register-member'; else echo 'update-member-account'?>">
 	<input type="submit" value="Sign Up Now">
 </form>
 </div><!--/main-content-->
-<?php get_sidebar();?>
-<?php get_footer(); ?>

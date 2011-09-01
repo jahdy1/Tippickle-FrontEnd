@@ -34,6 +34,9 @@ $_POST = array_merge($_POST, array('target_type'=>'tip'));
 
 echo CURLER::post(get_bloginfo('url').'/api/tip/', $_POST);
 
+//$data = array('actor_uid'=>2, 'target_uid'=>1, 'rating'=>'0.8');
+//echo CURLER::post('http://www.tippickle.com/api/rating/', $data);
+
 
 ?>
 
