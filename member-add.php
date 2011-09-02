@@ -11,8 +11,12 @@ $stype = 'member';
 <?php 
 
 $action = isset($_GET['edit'])?'edit':'add';
-
-$form = new Form($stype,NULL,1);
+$member = isset($_GET['member_uid'])? Object::get($_GET['member_uid']):NULL;
+$id = NULL;
+if($member && $member->uid != 0){
+	$id = $member->getID();
+}
+$form = new Form($stype,$id,1);
 //echo $form->build();
 if($results = $form->process()){
 	if(!empty($results)){

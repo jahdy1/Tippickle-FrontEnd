@@ -10,6 +10,8 @@
 	
 	$pg = isset($_GET['pg'])?$_GET['pg']:false;
 	$rp = isset($_GET['rp'])?$_GET['rp']:10;
+	$descending = isset($_GET['asc'])? false: true;
+	$active = !isset($_GET['active'])? false: true;
 	
 	switch($target_type):
 		case 'tip':
@@ -34,19 +36,22 @@
 							} else if(isset($_GET['tip_ids'])){
 								$tips = explode(',',$_GET['tip_ids']);
 								if(isset($_GET['count'])){
-									$results = Tip::getTipsCount($tips, false);
+									$results = Tip::getTipsCount($tips, $active);
 								} else {
-									$results = Tip::getTips($tips, true, false, $pg, $rp);
+									$results = Tip::getTips($tips, $descending, $active, $pg, $rp);
 								}
+								echo RestUtils::sendResponse(200, json_encode($results));
+							} else if(isset($_GET['popular'])){
+								$results = Tip::getPopular();
 								echo RestUtils::sendResponse(200, json_encode($results));
 							}
 						break;
 					}
 				} else {
 					if(isset($_GET['count'])){
-						$results = Tip::getAllCount(false);
+						$results = Tip::getAllCount($active);
 					} else {
-						$results = Tip::getAll(true, false, $pg, $rp);
+						$results = Tip::getAll($descending, $active, $pg, $rp);
 					}
 					if($results){
 						echo RestUtils::sendResponse(200, json_encode($results));
@@ -88,6 +93,14 @@
 				if(isset($action)){
 					switch($action){
 						case 'search':
+							if(isset($_GET['uid'])){
+								$member = Object::get($_GET['uid']);
+								if($member instanceOf Member){
+									echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok','member'=>$member)));
+								} else {
+									echo RestUtils::sendResponse(400, '');
+								}				
+							}
 						break;
 					}
 				}
