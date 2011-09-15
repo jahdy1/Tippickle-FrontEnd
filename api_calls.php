@@ -25,7 +25,6 @@ PUT 		/api/tip/{resource_id}/?api_key=XXXXX : Update an existing tip
 DELETE 	/api/tip/{resource_id}/?api_key=XXXXX : Delete an existing tip
 
 */
-
  
 $data = RestUtils::processRequest();
 
