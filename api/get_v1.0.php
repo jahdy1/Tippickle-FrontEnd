@@ -52,6 +52,7 @@
 								if(isset($_GET['count'])){
 									$results = Tip::getTipsCount($tips, $active);
 								} else {
+									//echo 'yay2';
 									$results = Tip::getTips($tips, $descending, $active, $pg, $rp);
 									$resultset = array();
 									$resultset['status'] = 200;
