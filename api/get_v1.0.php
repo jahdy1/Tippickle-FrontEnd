@@ -14,18 +14,24 @@
 	$rp = isset($_GET['rp'])?$_GET['rp']:10;
 	$descending = isset($_GET['asc'])? false: true;
 	$active = !isset($_GET['active'])? false: true;
+	$host_id = API_READ == 'private'? APIUSER:NULL;
 	
 	switch($target_type):
 		case 'tip':
 			if($args && isset($args['id'])){
 				$tip = new Tip($args['id']);
 				if($tip->uid != 0){
-					$resultset = array();
-					$resultset['status'] = 200;
-					$resultset['recordCount'] = 1;
-					$resultset['results'] = $tip;
-					echo RestUtils::sendResponse($resultset['status'], json_encode($resultset));
-					exit;
+					if((API_READ == 'private' && $tip->host_id == APIUSER) || API_READ == 'public'){
+						$resultset = array();
+						$resultset['status'] = 200;
+						$resultset['recordCount'] = 1;
+						$resultset['results'] = $tip;
+						echo RestUtils::sendResponse($resultset['status'], json_encode($resultset));
+						exit;
+					} else {
+						echo RestUtils::sendResponse(401, '');
+						exit;
+					}
 				} else {
 					echo RestUtils::sendResponse(400, '');
 					exit;
@@ -50,13 +56,13 @@
 							} else if(isset($_GET['tip_ids'])){
 								$tips = explode(',',$_GET['tip_ids']);
 								if(isset($_GET['count'])){
-									$results = Tip::getTipsCount($tips, $active);
+									$results = Tip::getTipsCount($tips, $active, $host_id);
 								} else {
 									//echo 'yay2';
-									$results = Tip::getTips($tips, $descending, $active, $pg, $rp);
+									$results = Tip::getTips($tips, $descending, $active, $pg, $rp, $host_id);
 									$resultset = array();
 									$resultset['status'] = 200;
-									$resultset['recordCount'] = Tip::getTipsCount($tips, $active);
+									$resultset['recordCount'] = Tip::getTipsCount($tips, $active, $host_id);
 									$resultset['results'] = $results;
 									$results = $resultset;
 								}
@@ -71,12 +77,12 @@
 					}
 				} else {
 					if(isset($_GET['count'])){
-						$results = Tip::getAllCount($active);
+						$results = Tip::getAllCount($active, $host_id);
 					} else {
-						$results = Tip::getAll($descending, $active, $pg, $rp);
+						$results = Tip::getAll($descending, $active, $pg, $rp, $host_id);
 						$resultset = array();
 						$resultset['status'] = 200;
-						$resultset['recordCount'] = Tip::getAllCount($active);
+						$resultset['recordCount'] = Tip::getAllCount($active, $host_id);
 						$resultset['results'] = $results;
 						$results = $resultset;
 					}
@@ -137,7 +143,17 @@
 								} else {
 									echo RestUtils::sendResponse(400, '');
 									exit;
-								}				
+								}
+							}
+							if(isset($_GET['get_id'])){
+								$user = APIUser::getByKey(APIKEY);
+								if(isset($user->email)){
+									echo RestUtils::sendResponse(200, json_encode(array('status'=>'200','recordCount'=>1,'results'=>$user->id)));
+									exit;
+								} else {
+									echo RestUtils::sendResponse(400, '');
+									exit;
+								}
 							}
 						break;
 					}

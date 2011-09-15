@@ -16,6 +16,7 @@ GET			/api/tip/search/?tag=NYC&pg=1&asc&api_key=XXXXX : Get array of tips that s
 GET			/api/tip/search/?tag=NYC&count&api_key=XXXXX : Get count of this query
 GET			/api/tip/search/?popular&api_key=XXXXX : Get list of popular tips
 GET			/api/member/search/?uid=3&api_key=XXXXX : Get member with UID of 3
+GET			/api/member/search/?get_id&api_key=XXXXX : Returns the id of the given api key user
 GET			/api/member/3/?api_key=XXXXX : Get member with ID of 3
 POST 		/api/tip/?api_key=XXXXX : Add a tip
 POST 		/api/rating/?api_key=XXXXX : Add a rating
@@ -37,6 +38,12 @@ if(isset($req_data['api_key'])){
 }
 
 if($authenticated){
+	
+	$user_ops = (array)json_decode($user->options);
+	define('APIKEY', $req_data['api_key']);
+	define('APIUSER', $user->id);
+	define('API_READ', $user_ops['api_read_access']);
+	define('API_WRITE', $user_ops['api_write_access']);
 
 	$entity = get_query_var('entity') != '' ? get_query_var('entity'):false;
 	$id = false;
