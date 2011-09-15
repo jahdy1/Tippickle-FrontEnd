@@ -15,6 +15,8 @@ GET			/api/tip/search/?tag=NYC&pg=1&active&api_key=XXXXX : Get array of tips tha
 GET			/api/tip/search/?tag=NYC&pg=1&asc&api_key=XXXXX : Get array of tips that share the tag 'NYC' in ascending order by date. Return only page 1
 GET			/api/tip/search/?tag=NYC&count&api_key=XXXXX : Get count of this query
 GET			/api/tip/search/?popular&api_key=XXXXX : Get list of popular tips
+GET			/api/member/search/?uid=3&api_key=XXXXX : Get member with UID of 3
+GET			/api/member/3/?api_key=XXXXX : Get member with ID of 3
 POST 		/api/tip/?api_key=XXXXX : Add a tip
 POST 		/api/rating/?api_key=XXXXX : Add a rating
 POST 		/api/comment/?api_key=XXXXX : Add a comment
