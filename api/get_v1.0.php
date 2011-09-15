@@ -12,6 +12,7 @@
 	
 	$pg = isset($_GET['pg'])?$_GET['pg']:false;
 	$rp = isset($_GET['rp'])?$_GET['rp']:10;
+	$popular_action = isset($_GET['popular_action'])?$_GET['popular_action']:NULL;
 	$descending = isset($_GET['asc'])? false: true;
 	$active = !isset($_GET['active'])? false: true;
 	$host_id = API_READ == 'private'? APIUSER:NULL;
@@ -42,12 +43,12 @@
 						case 'search':
 							if(isset($_GET['tag'])){
 								if(isset($_GET['count'])){
-									$results = Tag::getSimilarTipsCount(urldecode($_GET['tag']));
+									$results = Tip::getSimilarTipsCount(urldecode($_GET['tag']), $host_id);
 								} else {
-									$results = Tag::getSimilarTips(urldecode($_GET['tag']), $pg, $rp);
+									$results = Tip::getSimilarTips(urldecode($_GET['tag']), $pg, $rp, $host_id);
 									$resultset = array();
 									$resultset['status'] = 200;
-									$resultset['recordCount'] = Tag::getSimilarTipsCount(urldecode($_GET['tag']));
+									$resultset['recordCount'] = Tip::getSimilarTipsCount(urldecode($_GET['tag']), $host_id);
 									$resultset['results'] = $results;
 									$results = $resultset;
 								}
@@ -69,7 +70,7 @@
 								echo RestUtils::sendResponse(200, json_encode($results));
 								exit;
 							} else if(isset($_GET['popular'])){
-								$results = Tip::getPopular();
+								$results = Tip::getPopular($popular_action, $descending, $active, $pg, $rp, $host_id);
 								echo RestUtils::sendResponse(200, json_encode($results));
 								exit;
 							}
