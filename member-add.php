@@ -15,6 +15,9 @@ $member = isset($_GET['member_uid'])? Object::get($_GET['member_uid']):NULL;
 $id = NULL;
 if($member && $member->uid != 0){
 	$id = $member->getID();
+	if($member->host_id == ''){
+		$member->edit(array('host_id'=>APIUSER));
+	}
 }
 $form = new Form($stype,$id,1);
 //echo $form->build();

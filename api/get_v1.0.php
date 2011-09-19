@@ -71,6 +71,11 @@
 								exit;
 							} else if(isset($_GET['popular'])){
 								$results = Tip::getPopular($popular_action, $descending, $active, $pg, $rp, $host_id);
+									$resultset = array();
+									$resultset['status'] = 200;
+									$resultset['recordCount'] = count($results);
+									$resultset['results'] = $results;
+									$results = $resultset;
 								echo RestUtils::sendResponse(200, json_encode($results));
 								exit;
 							}
@@ -120,7 +125,7 @@
 					foreach($ass as $a){
 						if($a['type'] == 'member'){
 							$member = new Member($a['id']);
-							echo RestUtils::sendResponse(200, json_encode(array('status'=>'200','recordCount'=>1,'results'=>$member)));
+							echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok','recordCount'=>1,'results'=>$member)));
 							exit;
 						}
 					}			
@@ -130,7 +135,7 @@
 				}
 			} elseif($id) {
 				$member = new Member($id);
-				echo RestUtils::sendResponse(200, json_encode(array('status'=>'200','recordCount'=>1,'results'=>$member)));
+				echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok','recordCount'=>1,'results'=>$member)));
 				exit;				
 			} else {
 				if(isset($action)){
@@ -139,7 +144,7 @@
 							if(isset($_GET['uid'])){
 								$member = Object::get($_GET['uid']);
 								if($member instanceOf Member){
-									echo RestUtils::sendResponse(200, json_encode(array('status'=>'200','recordCount'=>1,'results'=>$member)));
+									echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok','recordCount'=>1,'results'=>$member)));
 									exit;
 								} else {
 									echo RestUtils::sendResponse(400, '');
@@ -149,7 +154,7 @@
 							if(isset($_GET['get_id'])){
 								$user = APIUser::getByKey(APIKEY);
 								if(isset($user->email)){
-									echo RestUtils::sendResponse(200, json_encode(array('status'=>'200','recordCount'=>1,'results'=>$user->id)));
+									echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok','recordCount'=>1,'results'=>$user->id)));
 									exit;
 								} else {
 									echo RestUtils::sendResponse(400, '');

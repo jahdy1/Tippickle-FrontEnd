@@ -7,7 +7,7 @@
 	if(isset($target_args) && !empty($target_args)){
 		$args = $target_args;
 	}
-	
+		
 	if($target_type == 'tip'){
 		if($args && isset($args['id'])){
 			$tip = new Tip($args['id']);

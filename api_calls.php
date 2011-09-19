@@ -31,6 +31,8 @@ $data = RestUtils::processRequest();
 
 $req_data = $data->getRequestVars();
 
+if(isset($_GET['debuggable'])) var_dump('data', $data, 'req_data', $req_data);
+
 $authenticated = false;
 if(isset($req_data['api_key'])){
 	$user = APIUser::getByKey($req_data['api_key']);
