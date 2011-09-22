@@ -1,14 +1,6 @@
 <?php
 
 	extract($data->getRequestVars());
-
-	$args = false;
-	
-	if(isset($target_args) && !empty($target_args)){
-		$args = $target_args;
-	}
-	
-	// $resultset = array('status'=>NULL,'recordCount'=>NULL,'results'=>NULL);
 	
 	$pg = isset($_GET['pg'])?$_GET['pg']:false;
 	$rp = isset($_GET['rp'])?$_GET['rp']:10;
@@ -19,8 +11,8 @@
 	
 	switch($target_type):
 		case 'tip':
-			if($args && isset($args['id'])){
-				$tip = new Tip($args['id']);
+			if($id){
+				$tip = new Tip($id);
 				if($tip->uid != 0){
 					if((API_READ == 'private' && $tip->host_id == APIUSER) || API_READ == 'public'){
 						$resultset = array();
@@ -118,8 +110,8 @@
 			}
 		break;
 		case 'comment':
-			if($args && isset($args['id'])){
-				$comment = new Comment($args['id']);
+			if($id){
+				$comment = new Comment($id);
 				if($comment->uid != 0){
 					echo RestUtils::sendResponse(200, json_encode($comment));
 					exit;

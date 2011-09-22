@@ -1,7 +1,5 @@
 <?php
 
-// add Tip to db
-
 switch($target_type){
 	case 'tip':
 	if($values = $data->getRequestVars()){
