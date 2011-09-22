@@ -84,7 +84,7 @@
 							if(isset($_GET['delete_tips'])){
 								$tips = explode(',',$_GET['delete_tips']);
 								if(Entity::deleteEntities(TIPS_TABLE, 'id', $tips)){
-									RestUtils::sendResponse(200, json_encode(array('status'=>'ok')));
+									echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok')));
 								} else {
 									echo RestUtils::sendResponse(400, '');
 								}
@@ -92,7 +92,7 @@
 							if(isset($_GET['approve_tips'])){
 								$tips = explode(',',$_GET['approve_tips']);
 								if($response = Entity::updateEntities(TIPS_TABLE, 'id', $tips,array('active'=>1))){
-									RestUtils::sendResponse(200, json_encode(array('status'=>'ok', 'response'=>$response)));
+									echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok', 'response'=>$response)));
 								} else {
 									echo RestUtils::sendResponse(400, '');
 								}
@@ -144,7 +144,7 @@
 							if(isset($_GET['delete_comments'])){
 								$tips = explode(',',$_GET['delete_comments']);
 								if(Entity::deleteEntities(COMMENTS_TABLE, 'id', $tips)){
-									RestUtils::sendResponse(200, json_encode(array('status'=>'ok')));
+									echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok')));
 								} else {
 									echo RestUtils::sendResponse(400, '');
 								}
@@ -152,9 +152,11 @@
 							if(isset($_GET['approve_comments'])){
 								$tips = explode(',',$_GET['approve_comments']);
 								if($response = Entity::updateEntities(COMMENTS_TABLE, 'id', $tips,array('active'=>1))){
-									RestUtils::sendResponse(200, json_encode(array('status'=>'ok', 'response'=>$response)));
+									echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok', 'response'=>$response)));
+									exit;
 								} else {
 									echo RestUtils::sendResponse(400, '');
+									exit;
 								}
 							}							
 						break;
@@ -195,25 +197,81 @@
 									exit;
 								}
 							}
-							if(isset($_GET['get_id'])){
-								$user = APIUser::getByKey(APIKEY);
-								if(isset($user->email)){
-									echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok','recordCount'=>1,'results'=>$user->id)));
-									exit;
-								} else {
-									echo RestUtils::sendResponse(400, '');
-									exit;
-								}
-							}
 							if(isset($_GET['get_all'])){
 								$user = APIUser::getByKey(APIKEY);
-								if($results = Member::getAll($descending, $active, $pg, $rp, $user->id)){
-									echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok','recordCount'=>1,'results'=>$results)));
-									exit;
+								$resultset = array();
+								$resultset['status'] = 'ok';
+								$resultset['recordCount'] = Member::getAllCount($active, $user->id);	
+								$resultset['results'] = Member::getAll($descending, $active, $pg, $rp, $user->id);	
+								$results = $resultset;
+								echo RestUtils::sendResponse(200, json_encode($results));
+								exit;
+							}
+							if(isset($_GET['pub_count'])){
+								$nums = explode(',',$_GET['pub_count']);
+								$uids = array();
+								foreach($nums as $id){
+									$uids[] = trim($id);
 								}
+								$resultset = array();
+								$resultset['status'] = 'ok';
+								$resultset['recordCount'] = 1;	
+								$resultset['results'] = Tip::getCountByUser($uids, $active);	
+								$results = $resultset;
+								echo RestUtils::sendResponse(200, json_encode($results));
+								exit;
 							}
 						break;
+						case 'set':
+						break;
 					}
+				}
+			}
+		break;
+		case 'user':
+			if($id){
+				$user = new APIUser($id);
+				if(isset($user->email)){
+					echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok','recordCount'=>1,'results'=>$user)));
+					exit;
+				} else {
+					echo RestUtils::sendResponse(400, '');
+					exit;
+				}
+			} elseif(isset($action)){
+				switch($action){
+					case 'search':
+						if(isset($_GET['get_id'])){
+							$user = APIUser::getByKey(APIKEY);
+							if(isset($user->email)){
+								echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok','recordCount'=>1,'results'=>$user->id)));
+								exit;
+							} else {
+								echo RestUtils::sendResponse(400, '');
+								exit;
+							}
+						}
+						if(isset($_GET['get_options'])){
+							$user = APIUser::getByKey(APIKEY);
+							if(isset($user->email)){
+								echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok','recordCount'=>1,'results'=>$user->options)));
+								exit;
+							} else {
+								echo RestUtils::sendResponse(400, '');
+								exit;
+							}
+						}
+						if(isset($_GET['get'])){
+							$user = APIUser::getByKey(APIKEY);
+							if(isset($user->email)){
+								echo RestUtils::sendResponse(200, json_encode(array('status'=>'ok','recordCount'=>1,'results'=>$user)));
+								exit;
+							} else {
+								echo RestUtils::sendResponse(400, '');
+								exit;
+							}
+						}
+					break;
 				}
 			}
 		break;

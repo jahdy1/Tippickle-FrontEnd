@@ -61,7 +61,7 @@ if($authenticated){
 	
 	
 	if($entity) $data->target_type = $entity;
-	
+		
 	switch(strtolower($data->getMethod()))
 	{
 		case 'get':
